@@ -89,7 +89,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-cyan-300 to-purple-500 shadow-lg shadow-cyan-400/10" />
+          <div className="h-9 w-9 rounded-full bg-linear-to-br from-cyan-300 to-purple-500 shadow-lg shadow-cyan-400/10" />
         </button>
       </div>
     </header>
