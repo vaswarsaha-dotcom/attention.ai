@@ -1,13 +1,25 @@
+import type { ReactNode } from "react";
+
+interface CardProps {
+  children: ReactNode;
+  className?: string;
+  hover?: boolean;
+}
+
 export default function Card({
   children,
-  className = ""
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+  className = "",
+  hover = true
+}: CardProps) {
   return (
     <div
-      className={`glass rounded-2xl ${className}`}
+      className={[
+        "glass rounded-3xl",
+        hover ? "glass-hover" : "",
+        className
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       {children}
     </div>

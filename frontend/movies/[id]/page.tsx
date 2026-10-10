@@ -1,160 +1,204 @@
+
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import {
+  ArrowLeft,
+  CalendarDays,
+  Clock3,
+  Star,
+  Eye,
+  Brain,
+  Sparkles
+} from "lucide-react";
+
 import Sidebar from "@/components/layout/sidebar";
 import Navbar from "@/components/layout/navbar";
 import PageContainer from "@/components/layout/page-container";
-import MovieDetails from "@/components/movie/movie-details";
-import EngagementScore from "@/components/movie/engagement-score";
-import SceneCard from "@/components/scene/scene-card";
+import Card from "@/components/ui/card";
+import { getMovie } from "@/lib/movie-data";
 
-import type {
-  Movie,
-  Scene
-} from "@/types/api";
+export default async function MovieDetailsPage({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const movie = getMovie(decodeURIComponent(id));
 
-const movie: Movie = {
-  id: "dune2",
-  title: "Dune: Part Two",
+  if (!movie) notFound();
 
-  overview:
-    "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.",
+  const features = [
+    { label: "Action", value: movie.features.action },
+    { label: "Suspense", value: movie.features.suspense },
+    { label: "Emotion", value: movie.features.emotion },
+    { label: "Music", value: movie.features.music },
+    { label: "Pacing", value: movie.features.pacing },
+    { label: "Visuals", value: movie.features.visual },
+    { label: "Dialogue", value: movie.features.dialogue }
+  ];
 
-  posterUrl:
-    "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",
-
-  backdropUrl:
-    "https://image.tmdb.org/t/p/original/tmU7GeKVybMWFButWEGl2M4GeiP.jpg",
-
-  releaseDate: "2024-03-01",
-  runtime: 166,
-
-  genres: ["Sci-Fi", "Drama"],
-
-  rating: 8.6,
-  attention: 94,
-
-  features: {
-    action: 92,
-    suspense: 94,
-    emotion: 88,
-    music: 95,
-    pacing: 93,
-    visual: 99,
-    dialogue: 76
-  }
-};
-
-const scenes: Scene[] = Array.from(
-  { length: 5 },
-  (_, i) => ({
-    id: `s${i}`,
-    movieId: "dune2",
-    number: i + 1,
-
-    title: [
-      "Desert Arrival",
-      "The Fremen",
-      "The Prophecy",
-      "The Attack",
-      "Final Confrontation"
-    ][i],
-
-    start: `${String(i * 25).padStart(
-      2,
-      "0"
-    )}:00`,
-
-    end: `${String(
-      i * 25 + 24
-    ).padStart(2, "0")}:00`,
-
-    duration: 1440,
-
-    attention: [82, 91, 95, 98, 97][i],
-
-    features: movie.features,
-
-    explanation: [
-      "Strong visual activity establishes the world and raises curiosity.",
-      "Dialogue and character emotion increase viewer investment.",
-      "Suspense peaks as multiple narrative questions converge.",
-      "Rapid pacing, action and music create a high-engagement sequence.",
-      "Emotional stakes and payoff produce sustained attention."
-    ][i]
-  })
-);
-
-export default async function MoviePage() {
   return (
     <>
       <Sidebar />
       <Navbar />
 
       <PageContainer>
-        <div className="space-y-6">
-          <div className="relative overflow-hidden rounded-3xl min-h-[300px]">
-            <img
-              src={movie.backdropUrl}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+        <div className="mx-auto max-w-6xl space-y-6">
+          <Link
+            href="/movies"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.035] px-4 py-2.5 text-sm text-slate-300 transition hover:border-cyan-300/20 hover:bg-white/[0.07] hover:text-white"
+          >
+            <ArrowLeft size={16} />
+            Back to Explore
+          </Link>
 
-            <div className="absolute inset-0 bg-gradient-to-r from-[#050b12] via-[#050b12]/75 to-transparent" />
+          <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-950/65 shadow-2xl shadow-black/20">
+            <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-cyan-400/9 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 left-1/3 h-72 w-72 rounded-full bg-purple-500/9 blur-3xl" />
 
-            <div className="relative p-7 sm:p-10 max-w-2xl">
-              <div className="text-sm text-cyan-300">
-                MOVIE ANALYSIS
+            <div className="relative grid gap-7 p-5 sm:p-8 md:grid-cols-[230px_minmax(0,1fr)] lg:gap-10 lg:p-10">
+              <div className="mx-auto w-full max-w-57.5">
+                <div className="relative aspect-2/3 overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl shadow-black/30">
+                  <Image
+                    src={movie.posterUrl}
+                    alt={`${movie.title} poster`}
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 70vw, 230px"
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="mt-4 flex items-center gap-2 rounded-xl border border-cyan-300/15 bg-cyan-300/6 p-3">
+                  <Eye size={17} className="text-cyan-300" />
+                  <span className="text-sm text-slate-300">
+                    Attention score
+                  </span>
+                  <strong className="ml-auto text-lg text-cyan-200">
+                    {movie.attention}
+                  </strong>
+                </div>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl font-black mt-2">
-                {movie.title}
-              </h1>
+              <div className="flex min-w-0 flex-col justify-center">
+                <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                  <Sparkles size={14} />
+                  Movie intelligence
+                </p>
 
-              <p className="text-slate-300 mt-4">
-                {movie.overview}
-              </p>
+                <h1 className="mt-4 wrap-break-word text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
+                  {movie.title}
+                </h1>
+
+                <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-slate-300">
+                  <span className="flex items-center gap-2">
+                    <CalendarDays size={15} className="text-slate-500" />
+                    {movie.releaseDate?.slice(0, 4) || "Year unavailable"}
+                  </span>
+
+                  {movie.runtime > 0 && (
+                    <span className="flex items-center gap-2">
+                      <Clock3 size={15} className="text-slate-500" />
+                      {movie.runtime} min
+                    </span>
+                  )}
+
+                  <span className="flex items-center gap-2">
+                    <Star size={15} className="fill-amber-300 text-amber-300" />
+                    {Number(movie.rating).toFixed(1)}
+                  </span>
+                </div>
+
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {movie.genres.map((genre) => (
+                    <span
+                      key={genre}
+                      className="rounded-full border border-white/10 bg-white/4 px-3 py-1.5 text-xs text-slate-300"
+                    >
+                      {genre}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mt-8">
+                  <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                    Synopsis
+                  </h2>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-300 sm:text-base">
+                    {movie.overview ||
+                      "A description for this movie has not been added yet."}
+                  </p>
+                </div>
+
+                <div className="mt-7 flex flex-wrap gap-3">
+                  <Link
+                    href={`/analyze?movie=${encodeURIComponent(movie.id)}`}
+                    className="inline-flex items-center gap-2 rounded-xl bg-cyan-300 px-5 py-3 text-sm font-bold text-slate-950 transition hover:-translate-y-0.5 hover:bg-cyan-200"
+                  >
+                    <Brain size={17} />
+                    Analyze movie
+                  </Link>
+
+                  <Link
+                    href="/compare"
+                    className="rounded-xl border border-white/10 bg-white/4 px-5 py-3 text-sm font-medium text-slate-200 transition hover:bg-white/8"
+                  >
+                    Compare movies
+                  </Link>
+                </div>
+              </div>
             </div>
-          </div>
+          </section>
 
-          <div className="grid lg:grid-cols-3 gap-5">
-            <MovieDetails movie={movie} />
-
-            <EngagementScore
-              score={movie.attention}
-            />
-
-            <div className="glass rounded-2xl p-5">
-              <div className="text-xs text-slate-500">
-                RATING
+          <Card className="p-5 sm:p-7">
+            <div className="flex items-start gap-3">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-purple-300/15 bg-purple-300/8 text-purple-200">
+                <Brain size={19} />
               </div>
-
-              <div className="text-4xl font-bold mt-2">
-                {movie.rating}
-                <span className="text-sm text-slate-500">
-                  {" "}
-                  / 10
-                </span>
-              </div>
-
-              <div className="text-sm text-slate-400 mt-3">
-                {movie.runtime} minutes ·{" "}
-                {movie.releaseDate.slice(0, 4)}
+              <div>
+                <h2 className="text-xl font-bold">
+                  Cinematic attention signals
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-slate-400">
+                  Review the feature scores currently stored for this movie.
+                </p>
               </div>
             </div>
-          </div>
 
-          <div>
-            <h2 className="text-2xl font-bold mb-4">
-              Scene-by-scene attention
-            </h2>
+            <div className="mt-6 grid gap-5 sm:grid-cols-2">
+              {features.map(({ label, value }) => {
+                const safeValue = Math.max(
+                  0,
+                  Math.min(100, Number(value) || 0)
+                );
 
-            <div className="grid lg:grid-cols-2 gap-4">
-              {scenes.map((scene) => (
-                <SceneCard
-                  key={scene.id}
-                  scene={scene}
-                />
-              ))}
+                return (
+                  <div key={label}>
+                    <div className="mb-2 flex items-center justify-between text-sm">
+                      <span className="text-slate-300">{label}</span>
+                      <span className="font-semibold tabular-nums text-slate-100">
+                        {safeValue}%
+                      </span>
+                    </div>
+
+                    <div className="h-2 overflow-hidden rounded-full bg-white/6">
+                      <div
+                        className="h-full rounded-full bg-linear-to-r from-cyan-300 to-purple-400 transition-all duration-700"
+                        style={{ width: `${safeValue}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          </div>
+
+            <p className="mt-5 text-xs leading-5 text-slate-500">
+              These are stored project feature scores, not verified
+              audience measurements unless actual viewing data supports them.
+            </p>
+          </Card>
         </div>
       </PageContainer>
     </>

@@ -1,17 +1,16 @@
+
 export default function PageContainer({
   children
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="lg:pl-64 min-h-screen">
-      <div className="lg:hidden">
-        <div className="px-5 pt-5 text-xl font-bold gradient-text">
-          ✦ AttentionAI
-        </div>
+    <div className="min-h-screen w-full lg:pl-61">
+      <div className="px-5 pt-5 text-xl font-bold lg:hidden">
+        <span className="gradient-text">✦ AttentionAI</span>
       </div>
 
-      <main className="px-4 lg:px-8 py-6 max-w-[1700px] mx-auto">
+      <main className="mx-auto w-full max-w-[1800px] px-4 pb-10 pt-5 sm:px-6 lg:px-8 lg:pt-6">
         {children}
       </main>
     </div>
